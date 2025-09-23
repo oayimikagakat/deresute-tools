@@ -959,6 +959,7 @@ class StateMachine:
 
     def simulate_impl_auto(self):
         self.initialize_activation_arrays()
+        self.heel_heal()  # TODO : Temporary, remove this later
         while True:
             # Terminal condition: No more skills and no more notes
             if len(self.skill_times) == 0 and len(self.note_time_stack) == 0:
@@ -2485,3 +2486,14 @@ class StateMachine:
 
     def get_full_roll_chance(self) -> float:
         return self.full_roll_chance
+
+    def heel_heal(self):
+        has_heel = False
+        for unit in self.live.unit.all_units:
+            for card in unit.all_cards():
+                if card.sk.is_heel:
+                    has_heel = True
+                    break
+        if not has_heel:
+            return
+        self.life = self.max_life

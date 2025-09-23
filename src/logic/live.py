@@ -307,7 +307,7 @@ class BaseLive(ABC):
         else:
             self.color_bonuses[:3, self.color.value] = 30  # Appeal
             self.color_bonuses[4, self.color.value] = 30  # Skill
-            if self.unit.dominant_added_bonus_color is not None:
+            if not self.is_grand and self.unit.dominant_added_bonus_color is not None:
                 self.color_bonuses[:3, self.unit.dominant_added_bonus_color.value] = 30  # Appeal
                 self.color_bonuses[4, self.unit.dominant_added_bonus_color.value] = 30  # Skill
         return self.color_bonuses

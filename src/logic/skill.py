@@ -12,7 +12,7 @@ from static.skill import SKILL_BASE, SKILL_DESCRIPTION
 
 pyximport.install(language_level=3)
 
-BOOST_TYPES = {20, 32, 33, 34, 38, 45, 46, 47, 48, 49, 50}
+BOOST_TYPES = {20, 32, 33, 34, 38, 45, 46, 47, 48, 49, 50, 52}
 HARMONY_TYPES = {45, 46, 47, 48, 49, 50}
 COLOR_TARGETS = {21, 22, 23, 32, 33, 34, 45, 46, 47, 48, 49, 50}
 ACT_TYPES = {28: NoteType.LONG, 29: NoteType.FLICK, 30: NoteType.SLIDE}
@@ -171,6 +171,10 @@ class Skill:
         return all(req > 0 for req in self.min_requirements)
 
     @property
+    def is_heel(self) -> bool:
+        return self.skill_type == 51
+
+    @property
     def have_score_bonus(self) -> bool:
         return self.skill_type in (1, 2, 14, 15, 21, 22, 23, 26, 27, 28, 29, 30, 35, 36, 37, 42)
 
@@ -245,7 +249,7 @@ class Skill:
     def _handle_skill_type(cls, skill_type: int, skill_values: Tuple[int, int, int]) -> List[int]:
         assert len(skill_values) == 3
         values = [0, 0, 0, 0, 0]  # Score(Perfect), Score(Great), Combo, Heal, Support
-        if skill_type in (9, 12):  # Damage guard, combo support
+        if skill_type in (9, 12, 51):  # Damage guard, combo support, crystal heel
             pass
         elif skill_type in SUPPORT_TYPES:
             values[4] = skill_type - 4
@@ -291,7 +295,7 @@ class Skill:
             # Values for non-existing intervals were arbitrarily set
             ol_life = {4: 6, 6: 9, 7: 11, 9: 15,
                        5: 8, 8: 13, 10: 16, 11: 17, 12: 18, 13: 20, 14: 22, 15: 24, 16: 26, 17: 28, 18: 30}
-            spk_life = {7: 18, 9: 22, 11: 27,
+            spk_life = {7: 18, 9: 25, 11: 28,
                         4: 10, 5: 13, 6: 16, 8: 20, 10: 25, 12: 30, 13: 33, 14: 36, 15: 38, 16: 40, 17: 43, 18: 46}
             assert skill_data['condition'] in ol_life
             life_requirement = ol_life[skill_data['condition']] if skill_data['skill_type'] == 14 \

@@ -49,7 +49,8 @@ SKILL_BASE = {
     48: {"id": 48, "name": "Dominant Harmony (CoolxPassion)", "keywords": ["dom", "har"], "color": (108, 128, 156)},
     49: {"id": 49, "name": "Dominant Harmony (PassionxCute)", "keywords": ["dom", "har"], "color": (246, 105, 44)},
     50: {"id": 50, "name": "Dominant Harmony (PassionxCool)", "keywords": ["dom", "har"], "color": (155, 142, 106)},
-    51: {"id": 51, "name": "Crystal Heel", "keywords": ["cry"], "color": (78, 243, 253)}
+    51: {"id": 51, "name": "Crystal Heel", "keywords": ["cry"], "color": (78, 243, 253)},
+    52: {"id": 52, "name": "Starlight Ensemble", "keywords": ["ens"], "color": (255, 220, 255)}
 }
 
 SKILL_COLOR_BY_NAME = {
@@ -142,6 +143,7 @@ SKILL_DESCRIPTION = {
     48: "If song is PASSION type and only COOL or PASSION idols are in the unit, boosts SCORE UP skill effect of other COOL idols and COMBO BONUS UP skill effect of other PASSION idols scaling with each type's number.",
     49: "If song is CUTE type and only PASSION or CUTE idols are in the unit, boosts SCORE UP skill effect of other PASSION idols and COMBO BONUS UP skill effect of other CUTE idols scaling with each type's number.",
     50: "If song is COOL type and only PASSION or COOL idols are in the unit, boosts SCORE UP skill effect of other PASSION idols and COMBO BONUS UP skill effect of other COOL idols scaling with each type's number.",
+    52: "If song is ALL type, GREATLY boosts SCORE UP/COMBO BONUS UP.",
     }
 
 
