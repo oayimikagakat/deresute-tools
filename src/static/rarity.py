@@ -13,6 +13,8 @@ class Rarity(Enum):
     SR = 6
     SSRU = 7
     SSR = 8
+    USRU = 9
+    USR = 10
 
 
 logger.debug("Creating chihiro.rarity_text...")

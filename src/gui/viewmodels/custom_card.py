@@ -27,7 +27,7 @@ INTERVAL_LIST = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18]
 DURATION_LIST = [(3, "一瞬の間 "), (4.5, "わずかな間"), (6, "少しの間"), (7.5, "しばらくの間"), (9, "かなりの間")]
 PROBABILITY_LIST = ["High probability", "Middle probability", "Low probability"]
 
-frame_list = ["myncu", "mynco", "mynpa", "myr", "mysr", "myssrcu", "myssrco", "myssrpa"]
+frame_list = ["myncu", "mynco", "mynpa", "myr", "mysr", "myssrcu", "myssrco", "myssrpa", "myusr"]
 attr_list = ["mycu", "myco", "mypa"]
 
 
@@ -65,8 +65,9 @@ def initialize_custom_card_list():
 def get_stat_from_point(rarity: int, point: int, appeal: int) -> int:
     appeal_text = {0: "hp", 1: "vocal", 2: "dance", 3: "visual"}[appeal]
 
+    card_id = 500000 + rarity if rarity < 9 else 500016 + rarity
     value = sum(db.masterdb.execute_and_fetchone(
-        "SELECT {}_max, bonus_{} FROM card_data WHERE id = ?".format(appeal_text, appeal_text), [500000 + rarity]))
+        "SELECT {}_max, bonus_{} FROM card_data WHERE id = ?".format(appeal_text, appeal_text), [card_id]))
     if point > 0:
         appeal_text = "life" if appeal == 0 else appeal_text
         value += db.masterdb.execute_and_fetchone(
@@ -93,7 +94,7 @@ def refresh_custom_card_images():
 def save_custom_card_image(custom_id: int, rarity: int, image_id: int):
     card_id = 500000 + custom_id
     attribute = int(str(image_id)[0])
-    frame_index = (0, 3, 4, 5)[(rarity - 1) // 2]
+    frame_index = (0, 3, 4, 5, 8)[(rarity - 1) // 2]
     if frame_index in (0, 5):
         frame_index += attribute - 1
 
@@ -199,7 +200,7 @@ class CustomView:
         self.rarity_layout.addWidget(self.rarity_label)
 
         self.rarity_box = QComboBox()
-        self.rarity_box.addItems(("SSR+", "SSR", "SR+", "SR", "R+", "R", "N+", "N"))
+        self.rarity_box.addItems(("USR+", "USR", "SSR+", "SSR", "SR+", "SR", "R+", "R", "N+", "N"))
         self.rarity_box.currentIndexChanged.connect(lambda: self.update_image())
         self.rarity_box.currentIndexChanged.connect(lambda: self.update_appeal())
         self.rarity_box.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -242,12 +243,12 @@ class CustomView:
         self.vocal_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.vocal_layout.addWidget(self.vocal_label)
 
-        self.vocal_text = QLineEdit(str(3000))
+        self.vocal_text = QLineEdit(str(3500))
         self.vocal_text.setValidator(QIntValidator(0, 99999, None))
         self.vocal_layout.addWidget(self.vocal_text)
 
         self.vocal_spinbox = QSpinBox()
-        self.vocal_spinbox.setRange(0, 30)
+        self.vocal_spinbox.setRange(0, 36)
         self.vocal_spinbox.valueChanged.connect(lambda: self.update_appeal(1))
         self.vocal_spinbox.setDisabled(True)
         self.vocal_layout.addWidget(self.vocal_spinbox)
@@ -260,12 +261,12 @@ class CustomView:
         self.dance_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.dance_layout.addWidget(self.dance_label)
 
-        self.dance_text = QLineEdit(str(3000))
+        self.dance_text = QLineEdit(str(3500))
         self.dance_text.setValidator(QIntValidator(0, 99999, None))
         self.dance_layout.addWidget(self.dance_text)
 
         self.dance_spinbox = QSpinBox()
-        self.dance_spinbox.setRange(0, 30)
+        self.dance_spinbox.setRange(0, 36)
         self.dance_spinbox.valueChanged.connect(lambda: self.update_appeal(2))
         self.dance_spinbox.setDisabled(True)
         self.dance_layout.addWidget(self.dance_spinbox)
@@ -278,12 +279,12 @@ class CustomView:
         self.visual_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.visual_layout.addWidget(self.visual_label)
 
-        self.visual_text = QLineEdit(str(3000))
+        self.visual_text = QLineEdit(str(3500))
         self.visual_text.setValidator(QIntValidator(0, 99999, None))
         self.visual_layout.addWidget(self.visual_text)
 
         self.visual_spinbox = QSpinBox()
-        self.visual_spinbox.setRange(0, 30)
+        self.visual_spinbox.setRange(0, 36)
         self.visual_spinbox.valueChanged.connect(lambda: self.update_appeal(3))
         self.visual_spinbox.setDisabled(True)
         self.visual_layout.addWidget(self.visual_spinbox)
@@ -296,12 +297,12 @@ class CustomView:
         self.life_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.life_layout.addWidget(self.life_label)
 
-        self.life_text = QLineEdit(str(44))
+        self.life_text = QLineEdit(str(50))
         self.life_text.setValidator(QIntValidator(0, 999, None))
         self.life_layout.addWidget(self.life_text)
 
         self.life_spinbox = QSpinBox()
-        self.life_spinbox.setRange(0, 30)
+        self.life_spinbox.setRange(0, 36)
         self.life_spinbox.valueChanged.connect(lambda: self.update_appeal(0))
         self.life_spinbox.setDisabled(True)
         self.life_layout.addWidget(self.life_spinbox)
@@ -465,7 +466,7 @@ class CustomView:
 
     @property
     def card_rarity(self) -> int:
-        return 8 - self.rarity_box.currentIndex()
+        return 10 - self.rarity_box.currentIndex()
 
     @property
     def image_id(self) -> str:
@@ -570,7 +571,7 @@ class CustomView:
         if attribute not in (1, 2, 3) or not os.path.exists(str(IMAGE_PATH / (self.image_id + ".png"))):
             return
 
-        frame_index = (0, 3, 4, 5)[(self.card_rarity - 1) // 2]
+        frame_index = (0, 3, 4, 5, 8)[(self.card_rarity - 1) // 2]
         if frame_index in (0, 5):
             frame_index += attribute - 1
 
@@ -666,10 +667,10 @@ class CustomView:
 
         self.card_image_id_edit.setText("")
 
-        self.vocal_text.setText(str(3000))
-        self.dance_text.setText(str(3000))
-        self.visual_text.setText(str(3000))
-        self.life_text.setText(str(44))
+        self.vocal_text.setText(str(3500))
+        self.dance_text.setText(str(3500))
+        self.visual_text.setText(str(3500))
+        self.life_text.setText(str(50))
         self.vocal_spinbox.setValue(0)
         self.dance_spinbox.setValue(0)
         self.visual_spinbox.setValue(0)
@@ -704,7 +705,7 @@ class CustomView:
                 self.skill_values['value'], self.skill_values['value_2'], self.skill_values['value_3']]
 
     def load_card(self, data: OrderedDict):
-        self.rarity_box.setCurrentIndex(8 - data['rarity'])
+        self.rarity_box.setCurrentIndex(10 - data['rarity'])
 
         self.card_image_id_edit.setText(str(data['image_id']))
         self.update_image()
